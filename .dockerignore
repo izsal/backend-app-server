@@ -1,0 +1,10 @@
+.git
+.gitignore
+README.md
+*.log
+.env.local
+.env.development
+.env.production
+.DS_Store
+Thumbs.db
+tmp/
