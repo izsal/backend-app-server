@@ -19,14 +19,17 @@ func main() {
 	userRepo := repository.NewUserRepository(db.DB)
 	todoRepo := repository.NewTodoRepository(db.DB)
 	transactionRepo := repository.NewTransactionRepository(db.DB)
+	categoryRepo := repository.NewCategoryRepository(db.DB)
 
 	authService := service.NewAuthService(userRepo)
 	todoService := service.NewTodoService(todoRepo)
 	transactionService := service.NewTransactionService(transactionRepo)
+	categoryService := service.NewCategoryService(categoryRepo)
 
 	authHandler := handler.NewAuthHandler(authService)
 	todoHandler := handler.NewTodoHandler(todoService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
 
 	e := echo.New()
 
@@ -75,6 +78,15 @@ func main() {
 	transactionGroup.POST("", transactionHandler.CreateTransaction)
 	transactionGroup.PUT("/:id", transactionHandler.UpdateTransaction)
 	transactionGroup.DELETE("/:id", transactionHandler.DeleteTransaction)
+
+	// Protected routes for categories
+	categoryGroup := e.Group("/api/categories")
+	categoryGroup.Use(middleware.JWTMiddleware)
+
+	categoryGroup.GET("", categoryHandler.GetCategoriesByType)
+	categoryGroup.POST("", categoryHandler.CreateCategory)
+	categoryGroup.PUT("/:id", categoryHandler.UpdateCategory)
+	categoryGroup.DELETE("/:id", categoryHandler.DeleteCategory)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -17,5 +17,5 @@ func Init() {
 	if err != nil {
 		log.Fatalf("DB Connection failed: %v", err)
 	}
-	DB.AutoMigrate(&models.User{}, &models.Todo{}, &models.Transaction{})
+	DB.AutoMigrate(&models.User{}, &models.Todo{}, &models.Transaction{}, &models.Category{})
 }
