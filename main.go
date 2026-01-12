@@ -20,16 +20,19 @@ func main() {
 	todoRepo := repository.NewTodoRepository(db.DB)
 	transactionRepo := repository.NewTransactionRepository(db.DB)
 	categoryRepo := repository.NewCategoryRepository(db.DB)
+	debtRepo := repository.NewDebtRepository(db.DB)
 
 	authService := service.NewAuthService(userRepo)
 	todoService := service.NewTodoService(todoRepo)
 	transactionService := service.NewTransactionService(transactionRepo)
 	categoryService := service.NewCategoryService(categoryRepo)
+	debtService := service.NewDebtService(debtRepo)
 
 	authHandler := handler.NewAuthHandler(authService)
 	todoHandler := handler.NewTodoHandler(todoService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
+	debtHandler := handler.NewDebtHandler(debtService)
 
 	e := echo.New()
 
@@ -87,6 +90,18 @@ func main() {
 	categoryGroup.POST("", categoryHandler.CreateCategory)
 	categoryGroup.PUT("/:id", categoryHandler.UpdateCategory)
 	categoryGroup.DELETE("/:id", categoryHandler.DeleteCategory)
+
+	// Protected routes for debts
+	debtGroup := e.Group("/api/debts")
+	debtGroup.Use(middleware.JWTMiddleware)
+
+	debtGroup.GET("", debtHandler.GetDebts)
+	debtGroup.GET("/type", debtHandler.GetDebtsByType)
+	debtGroup.GET("/summary", debtHandler.GetDebtSummary)
+	debtGroup.POST("", debtHandler.CreateDebt)
+	debtGroup.PUT("/:id", debtHandler.UpdateDebt)
+	debtGroup.DELETE("/:id", debtHandler.DeleteDebt)
+	debtGroup.POST("/:id/payments", debtHandler.MakePayment)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

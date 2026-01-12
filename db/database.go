@@ -34,5 +34,5 @@ func Init() {
 		}
 	}
 
-	DB.AutoMigrate(&models.User{}, &models.Todo{}, &models.Transaction{}, &models.Category{})
+	DB.AutoMigrate(&models.User{}, &models.Todo{}, &models.Transaction{}, &models.Category{}, &models.Debt{})
 }
